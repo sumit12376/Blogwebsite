@@ -7,6 +7,7 @@ export class Service{
     databases;
     bucket;
     
+  //we create constructor so those only create when we create an object via class
     constructor(){
         this.client
         .setEndpoint(conf.appwriteUrl)
@@ -17,6 +18,7 @@ export class Service{
 
     async createPost({title, slug, content, featuredImage, status, userId}){
         try {
+                // appwrite method to create db ask for (dbid,collid,docid,content)
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
@@ -81,13 +83,14 @@ export class Service{
             return false
         }
     }
-
+ //all posts but only status active
+  //we use queries
     async getPosts(queries = [Query.equal("status", "active")]){
         try {
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                queries,
+                queries,  //or we can directly like here [Query.equal("status", "active")]
                 
 
             )
@@ -97,10 +100,10 @@ export class Service{
         }
     }
 
-    // file upload service
+ //file upload (images)
 
     async uploadFile(file){
-        try {
+        try {//this take bucked id , unique id for file ,and file
             return await this.bucket.createFile(
                 conf.appwriteBucketId,
                 ID.unique(),
@@ -133,6 +136,6 @@ export class Service{
     }
 }
 
-
+//object
 const service = new Service()
 export default service

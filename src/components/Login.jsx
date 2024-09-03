@@ -5,22 +5,25 @@ import { Button, Input } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
-
+//this component to make login component (not login page !)
+// we used react hook form
 function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // useform give 2 parameters
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // Added loading state
 
+    // a function which login the user if exist it will store the data to redux store and redirect
   const login = async (data) => {
     setError("");
     setLoading(true); // Set loading to true before starting the login process
     try {
+       // check if already logged in
       const session = await authService.login(data);
-      if (session) {
+      if (session) { // if exist then get current userdata
         const userData = await authService.getCurrentUser();
-        if (userData) {
+        if (userData) {  //put in store (authlogin is store login)
           dispatch(authLogin(userData));
         }
         navigate("/");
@@ -56,7 +59,8 @@ function Login() {
             Sign Up
           </Link>
         </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}     {/* this form will always use its own handleSubmit (which is method who input another method)
+        where you can provide your method  */}
         {loading && (
   <p className="text-white text-center text-xl font-semibold  p-2 rounded-md shadow-md">
     Loading...
@@ -68,10 +72,14 @@ function Login() {
             <Input
               label="Email: "
               placeholder="Enter your email"
-              type="email"
+              type="email" //what this ...register do is take all values form the form
+              //   (if we dont use ... it will overwrite)
+              // cause we want those state in another our custom components
+              // key : value
               {...register("email", {
                 required: true,
-                validate: {
+                validate: {  //this is regex to check valid email
+                  // / (your regex between / /) / .test(on what value you want to test) || else error message
                   matchPattern: (value) =>
                     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
                     "Email address must be a valid address",
