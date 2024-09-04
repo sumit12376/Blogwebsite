@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-
-// to get all posts
 import { Container, PostCard } from "../components";
 import appwriteService from "../appwrite/config";
 
@@ -9,21 +7,23 @@ function AllPosts() {
 
   useEffect(() => {
     appwriteService
-      .getPosts([]) // we pass empty array cause we want all posts (all means all active)
+      .getPosts([]) // Fetch all posts (all active)
       .then((posts) => {
         if (posts) {
           setPosts(posts.documents);
         }
       })
-      .catch();
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+      });
   }, []);
 
   return (
     <div className="w-full py-8">
       <Container>
-        <div className="flex flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {posts.map((post) => (
-            <div key={post.$id} className="p-2 w-1/4">
+            <div key={post.$id} className="w-full">
               <PostCard {...post} />
             </div>
           ))}
