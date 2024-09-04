@@ -71,7 +71,7 @@ export default function PostForm({ post }) {
     }, [watch, slugTransform, setValue]);
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="grid-cols-2 ">
+        <form onSubmit={handleSubmit(submit)}>
             <div className=" px-2">
                 <Input
                     label="Title :"
