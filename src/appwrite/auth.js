@@ -7,7 +7,7 @@ import { Client, Account, ID } from "appwrite";
 export class AuthService {
       //need 2 things account and client
     client = new Client();
-    account;// we did not new account when we call only we need (save resources b*tch)
+    account;// we did not new account when we call only we need 
 
      // constructor will only create when a instance is created
     constructor() {
@@ -18,7 +18,7 @@ export class AuthService {
             
     }
       // we create function seperate so if in future we want to chnage backend (wrapper)
-  // then code ki ma bhen na karni pade
+  
 
     async createAccount({email, password, name}) {
         try {

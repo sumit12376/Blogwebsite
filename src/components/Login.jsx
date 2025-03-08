@@ -5,26 +5,24 @@ import { Button, Input } from "./index";
 import { useDispatch } from "react-redux";
 import authService from "../appwrite/auth";
 import { useForm } from "react-hook-form";
-//this component to make login component (not login page !)
-// we used react hook form
+
 function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // useform give 2 parameters
+  const dispatch = useDispatch();
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // Added loading state
-
-    // a function which login the user if exist it will store the data to redux store and redirect
+  const [loading, setLoading] = useState(false);
   const login = async (data) => {
     setError("");
-    setLoading(true); // Set loading to true before starting the login process
+    setLoading(true); 
     try {
-       // check if already logged in
+       
       const session = await authService.login(data);
+      console.log("session" ,session)
       if (session) { // if exist then get current userdata
         const userData = await authService.getCurrentUser();
         if (userData) {  //put in store (authlogin is store login)
-          console.log(userData);
+          console.log("curr user",userData);
           dispatch(authLogin(userData));
           
         }
@@ -33,7 +31,7 @@ function Login() {
     } catch (error) {
       setError(error.message);
     } finally {
-      setLoading(false); // Set loading to false after the login process is complete
+      setLoading(false); 
     }
   };
 
@@ -61,8 +59,7 @@ function Login() {
             Sign Up
           </Link>
         </p>
-        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}     {/* this form will always use its own handleSubmit (which is method who input another method)
-        where you can provide your method  */}
+        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}  
         {loading && (
   <p className="text-white text-center text-xl font-semibold  p-2 rounded-md shadow-md">
     Loading...
@@ -74,20 +71,18 @@ function Login() {
             <Input
               label="Email: "
               placeholder="Enter your email"
-              type="email" //what this ...register do is take all values form the form
-              //   (if we dont use ... it will overwrite)
-              // cause we want those state in another our custom components
-              // key : value
+              type="email" 
               {...register("email", {
                 required: true,
-                validate: {  //this is regex to check valid email
-                  // / (your regex between / /) / .test(on what value you want to test) || else error message
+                validate: {  
                   matchPattern: (value) =>
                     /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
                     "Email address must be a valid address",
+                 
                 },
               })}
             />
+
 
             <Input
               label="Password: "
@@ -98,7 +93,7 @@ function Login() {
               })}
             />
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign in'} {/* Display loading text on button */}
+              {loading ? 'Signing in...' : 'Sign in'} 
             </Button>
           </div>
         </form>

@@ -14,19 +14,21 @@ function Signup() {
   const [loading, setLoading] = useState(false);
 
   const create = async (data) => {
-    setError(""); // Clear any previous errors
+    setError(""); 
     setLoading(true);
     try {
       const userData = await authService.createAccount(data);
+      console.log("userdata is=",userData)
       if (userData) {
         const currentUser = await authService.getCurrentUser();
+        console.log("curr user is=",currentUser )
         if (currentUser) dispatch(login(currentUser));
         navigate("/");
       }
     } catch (error) {
-      setError(error.message); // Set the error message if something goes wrong
+      setError(error.message); 
     } finally {
-      setLoading(false); // Ensure loading is set to false after the process
+      setLoading(false); 
     }
   };
 
@@ -58,7 +60,7 @@ function Signup() {
         )}
         {error && (
           <p className="text-red-600 mt-8 text-center">
-            {error} {/* Display the error message if it exists */}
+            {error} 
           </p>
         )}
         <form onSubmit={handleSubmit(create)}>

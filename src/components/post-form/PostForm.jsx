@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
-    const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
+    const { register, handleSubmit, watch, setValue, control } = useForm({
         defaultValues: {
             title: post?.title || "",
             slug: post?.$id || "",
@@ -17,34 +17,51 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
+    console.log("userData from Redux:", userData); // Debugging to check if userData exists
 
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+        console.log("Form data:", data);
 
-            if (file) {
-                appwriteService.deleteFile(post.featuredImage);
+        // Ensure userData exists before accessing its properties
+        if (!userData || !userData.$id) {
+            console.error("User data is missing. Make sure the user is logged in.");
+            return;
+        }
+
+        if (post) {
+            const file = data.image?.[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+
+            // Delete the old image only if a new one is uploaded
+            if (file && post.featuredImage) {
+                await appwriteService.deleteFile(post.featuredImage);
             }
 
             const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
-                featuredImage: file ? file.$id : undefined,
+                featuredImage: file ? file.$id : post.featuredImage,
             });
 
             if (dbPost) {
                 navigate(`/post/${dbPost.$id}`);
             }
         } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
+            // Handle new post creation
+            if (data.image?.[0]) {
+                const file = await appwriteService.uploadFile(data.image[0]);
+                console.log("Uploaded file:", file);
+                if (file) {
+                    const dbPost = await appwriteService.createPost({
+                        ...data,
+                        featuredImage: file.$id,
+                        userId: userData.$id, // Safe to use after checking userData exists
+                    });
+                    console.log("Created post:", dbPost);
+                    if (dbPost) {
+                        navigate(`/post/${dbPost.$id}`);
+                    }
                 }
+            } else {
+                console.error("Image is required for new posts.");
             }
         }
     };
@@ -60,7 +77,7 @@ export default function PostForm({ post }) {
         return "";
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === "title") {
                 setValue("slug", slugTransform(value.title), { shouldValidate: true });
@@ -72,7 +89,7 @@ export default function PostForm({ post }) {
 
     return (
         <form onSubmit={handleSubmit(submit)}>
-            <div className=" px-2">
+            <div className="px-2">
                 <Input
                     label="Title :"
                     placeholder="Title"
@@ -88,9 +105,9 @@ export default function PostForm({ post }) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE label="Content :" name="content" control={control} defaultValue={watch("content")} />
             </div>
-            <div className=" px-2">
+            <div className="px-2">
                 <Input
                     label="Featured Image :"
                     type="file"
@@ -98,7 +115,7 @@ export default function PostForm({ post }) {
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
-                {post && (
+                {post?.featuredImage && (
                     <div className="w-full mb-4">
                         <img
                             src={appwriteService.getFilePreview(post.featuredImage)}
