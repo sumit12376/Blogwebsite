@@ -31,7 +31,7 @@ export default function PostForm({ post }) {
         if (post) {
             const file = data.image?.[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
-            // Delete the old image only if a new one is uploaded
+
             if (file && post.featuredImage) {
                 await appwriteService.deleteFile(post.featuredImage);
             }

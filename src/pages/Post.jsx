@@ -35,13 +35,17 @@ export default function Post() {
     return post ? (
         <div className="py-8">
             <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={appwriteService.getFilePreview(post.featuredImage)}
-                        alt={post.title}
-                        className="rounded-xl"
-                    />
+                {/* Image Container */}
+                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2 overflow-hidden">
+                    <div className=" h-96 overflow-hidden"> {/* Adjust height as needed */}
+                        <img
+                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            alt={post.title}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
 
+                    {/* Edit and Delete Buttons (for author) */}
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
                             <Link to={`/edit-post/${post.$id}`}>
@@ -55,12 +59,16 @@ export default function Post() {
                         </div>
                     )}
                 </div>
+
+                {/* Post Title */}
                 <div className="w-full mb-6">
                     <h1 className="text-2xl font-bold text-white">{post.title}</h1>
                 </div>
+
+                {/* Post Content */}
                 <div className="browser-css text-white">
                     {parse(post.content)}
-                    </div>
+                </div>
             </Container>
         </div>
     ) : null;
