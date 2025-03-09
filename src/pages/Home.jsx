@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 import appwriteService from "../appwrite/config";
 import { Container, PostCard } from '../components';
 import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
-
+import { useNavigate } from 'react-router-dom';
 function Home() {
   const [posts, setPosts] = useState([]);
   const authStatus = useSelector((state) => state.auth.status); 
 
-  // Debugging: Log authStatus
-  console.log("Auth Status:", authStatus);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     appwriteService.getPosts().then((posts) => {
@@ -25,7 +25,7 @@ function Home() {
         <Container>
           <div className="mt-28">
             <div className="p-2 w-full">
-              {/* Hero Section */}
+            
               <h1 className="text-white text-6xl font-bold mb-4 animate-fade-in">
                 Welcome to Our Blog Website
               </h1>
@@ -33,12 +33,12 @@ function Home() {
                 Discover insightful articles, tips, and stories from our writers.
               </p>
               {!authStatus && (
-                <button
-                  onClick={() => window.location.href = '/add-post'}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 animate-fade-in delay-200"
-                >
-                  Start Writing
-                </button>
+              <button
+              onClick={() => navigate('/add-post')}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 animate-fade-in delay-200"
+            >
+              Start Writing
+            </button>
               )}
             </div>
           </div>

@@ -41,9 +41,10 @@ function Login() {
   <img src="/loginsvg.png" alt="Your Alt Text" />
 </div>
 
-      <div
-        className={`my-10 mx-20 w-full max-w-lg rounded-xl p-10 border bg-indigo-950 border-black/10 justify-between gap-10`}
-      >
+<div
+  className={`my-10 mx-4 sm:mx-10 w-full max-w-sm sm:max-w-lg rounded-xl p-6 sm:p-10  bg-indigo-950 `}
+>
+
         <div className="mb-2 flex justify-center">
           <span className="inline-block w-full max-w-[100px]"></span>
         </div>
